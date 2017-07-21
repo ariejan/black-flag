@@ -15,7 +15,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14
 
 RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/${MONGO_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
 
-RUN apt-get update && apt-get install -y --allow-unauthenticated mongodb-org libzmq3-dev curl python build-essential checkinstall
+RUN apt-get update && apt-get install -y --allow-unauthenticated mongodb-org libzmq3-dev curl python build-essential checkinstall wget
 
 ENV NVM_DIR /usr/local/nvm
 
@@ -50,9 +50,9 @@ COPY ./insight-data/bitcoin.conf /root/bitcoin-node/data
 # Install BWS
 # Note: contrary to documentation, Docker ADD seems to extract remote tar.gz files
 WORKDIR /root
-ADD https://github.com/bitpay/bitcore-wallet-service/archive/v${BWS_VERSION}.tar.gz .
+RUN wget https://github.com/bitpay/bitcore-wallet-service/archive/v${BWS_VERSION}.tar.gz
+RUN tar -zxf v{BWS_VERSION}.tar.gz
 RUN ls -lah
-# RUN tar -zxf bws.tar.gz
 
 
 # setup bitcore wallet service
