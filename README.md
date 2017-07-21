@@ -103,6 +103,12 @@ Note: your Copay wallet will get confused if previously known transactions
 disappear from the blockchain. It's best to delete the wallet and create
 a new one (or import again with a recover phrase).
 
+## Contributing
+
+Pull requests and issue reports are welcome. If you run into trouble
+getting up and running, don't forget to mention your `docker` and 
+`docker-compose` versions and to add any relevant logs.
+
 ## Credits
 
 Development by [Ariejan de Vroom](https://www.devroom.io)
