@@ -1,5 +1,7 @@
 # Black Flag
 
+[![Build Status](https://travis-ci.org/ariejan/black-flag.svg?branch=master)](https://travis-ci.org/ariejan/black-flag)
+
 Black Flag offers a multi-node regtest setup, including a fully operational
 bitcore-node, including insight and bitcoin-wallet-service. This means you 
 can use [CoPay](https://copay.io/) as a client on your regtest network.
