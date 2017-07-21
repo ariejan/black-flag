@@ -6,9 +6,7 @@ services:
   - docker
 
 install:
-  - docker-compose build
-  - docker-compose create
-  - docker-compose start
+  - docker-compose up
 
 script:
   # Check if services are running
