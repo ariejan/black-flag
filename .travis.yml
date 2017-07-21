@@ -8,6 +8,10 @@ services:
 install:
   - docker-compose up -d
 
+before_script:
+  # Give nodes some time to spin up fully
+  - sleep 15
+
 script:
   # Check if services are running
   - docker ps | grep -q node_one
