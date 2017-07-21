@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+BLOCKS=200
+AMOUNT=100
+ADDRESS="mxqYXyf4NiFYaLGkvL1zMtYgcqbXbeLFg6"
+
+echo "Generating ${BLOCKS} blocks"
+./one getnewaddress
+./two getnewaddress
+
+./one generate $BLOCKS > /dev/null
+
+echo "Transferring ${AMOUNT} BTC to ${ADDRESS}"
+./one sendtoaddress $ADDRESS $AMOUNT > /dev/null
+
+echo "Confirming transactions"
+./one generate 10 > /dev/null
+
+echo "Check balance: http://localhost:3001/insight/address/${ADDRESS}"
+echo "All done!"
+
+
+
+

@@ -1,0 +1,69 @@
+FROM ubuntu
+MAINTAINER Ariejan de Vroom <ariejan@devroom.io>
+
+ARG MONGO_VERSION=3.2
+ARG BWS_VERSION=1.15
+ARG NODE_VERSION=4.4.7
+
+ENV NETWORK=regtest
+
+EXPOSE 3001 3232 8333 6667 27017 28017
+
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh
+
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+RUN echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/${MONGO_VERSION} multiverse" | tee /etc/apt/sources.list.d/mongodb-org-${MONGO_VERSION}.list
+
+RUN apt-get update && apt-get install -y --allow-unauthenticated mongodb-org libzmq3-dev curl python build-essential checkinstall
+
+ENV NVM_DIR /usr/local/nvm
+
+RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash \
+    && source $NVM_DIR/nvm.sh \
+    && nvm install $NODE_VERSION \
+    && nvm alias default $NODE_VERSION \
+    && nvm use default
+
+ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH      $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV BWS_VERSION ${BWS_VERSION}
+ENV BITCOIND  $NVM_DIR/versions/node/v$NODE_VERSION/lib/node_modules/bitcore-node/bin/bitcoind
+
+RUN npm i -g bitcore-node
+
+WORKDIR /root
+
+RUN bitcore-node create bitcoin-node
+RUN cat /root/bitcoin-node/bitcore-node.json
+
+COPY ./insight-data/bitcore-node.json bitcoin-node/
+RUN sed -i -- "s/livenet/${NETWORK}/g" /root/bitcoin-node/bitcore-node.json
+RUN sed -i -- "s#bitcoind_executable#${BITCOIND}#g" /root/bitcoin-node/bitcore-node.json
+
+WORKDIR /root/bitcoin-node
+RUN bitcore-node install insight-ui insight-api web
+
+# Copy our custom bitcoin.conf
+COPY ./insight-data/bitcoin.conf /root/bitcoin-node/data
+
+# Install BWS
+# Note: contrary to documentation, Docker ADD seems to extract remote tar.gz files
+WORKDIR /root
+ADD https://github.com/bitpay/bitcore-wallet-service/archive/v${BWS_VERSION}.tar.gz .
+RUN ls -lah
+# RUN tar -zxf bws.tar.gz
+
+
+# setup bitcore wallet service
+COPY ./insight-data/bws-config.js /root/bitcore-wallet-service-${BWS_VERSION}/config.js
+RUN cd /root/bitcore-wallet-service-${BWS_VERSION} && npm i
+
+# setup dirs for mongo
+RUN mkdir -p /root/mongo-data
+
+ENTRYPOINT mongod --dbpath /root/mongo-data/ --fork --logpath /root/mongo-data/mongod.log && \
+           npm start --prefix /root/bitcore-wallet-service-${BWS_VERSION} && \
+           cd /root/bitcoin-node && \
+           bitcore-node start
+

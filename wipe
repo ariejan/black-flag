@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -f
+
+echo "Wiping regtest blockchain data"
+echo "Wiping node one"
+docker exec -ti node_one sh -c "find /home/tester/black-flag/node_one/regtest/* -not -name 'server.*' -delete"
+
+echo "Wiping node two"
+docker exec -ti node_two sh -c "find /home/tester/black-flag/node_two/regtest/* -not -name 'server.*' -delete"
+
+echo "Wiping insight"
+docker exec -ti insight sh -c "find /root/bitcoin-node/data/regtest/* -not -name 'server.*' -delete"
+
+echo "Restarting regtest network"
+docker-compose stop
+docker-compose start
+
+echo "All done!"
+
+
+
+

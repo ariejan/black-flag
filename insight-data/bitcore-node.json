@@ -1,0 +1,21 @@
+{
+  "network": "regtest",
+  "port": 3001,
+  "services": [
+    "bitcoind",
+    "insight-api",
+    "insight-ui",
+    "web"
+  ],
+  "servicesConfig": {
+    "insight-api": {
+      "disableRateLimiter": true
+    },
+    "bitcoind": {
+      "spawn": {
+        "datadir": "./data",
+        "exec": "bitcoind_executable"
+      }
+    }
+  }
+}

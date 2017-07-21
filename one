@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "# Running on node_one"
+docker exec -ti node_one bitcoin-cli -datadir=/home/tester/black-flag/node_one/ "$@"
+

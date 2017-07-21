@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  node_one:
+    container_name: node_one
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+    entrypoint: bitcoind --datadir=/home/tester/black-flag/node_one
+    expose:
+      - "19000"
+    ports:
+      - "19001"
+
+  node_two:
+    container_name: node_two
+    depends_on:
+      - node_one
+    build:
+      context: .
+      dockerfile: Dockerfile-node
+    entrypoint: bitcoind --datadir=/home/tester/black-flag/node_two
+    expose:
+      - "19010"
+    ports:
+      - "19011"
+
+  insight:
+    container_name: insight
+    build:
+      context: .
+      dockerfile: Dockerfile-insight
+    expose:
+      - "19020"
+    ports:
+      - "3001:3001"
+      - "3232:3232"
+
+
+      
+
+

@@ -1,0 +1,25 @@
+FROM ubuntu:16.04
+MAINTAINER Ariejan de Vroom <ariejan@devroom.io>
+
+# Install and update Apt packages
+RUN apt-get update && \
+    apt-get install --yes software-properties-common && \
+    add-apt-repository --yes ppa:bitcoin/bitcoin && \
+    apt-get update && \
+    apt-get install --yes bitcoind
+
+# Create an non-root use
+RUN adduser --disabled-login --gecos "" tester
+
+WORKDIR /home/tester
+
+# Copy ./node-data to image
+ADD ./node-data /home/tester/black-flag
+RUN chown -R tester:tester /home/tester/black-flag
+
+USER tester
+
+WORKDIR /home/tester/black-flag
+
+EXPOSE 19001 19011
+CMD ["/bin/bash"]
