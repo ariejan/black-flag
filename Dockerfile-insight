@@ -51,7 +51,7 @@ COPY ./insight-data/bitcoin.conf /root/bitcoin-node/data
 # Note: contrary to documentation, Docker ADD seems to extract remote tar.gz files
 WORKDIR /root
 RUN wget https://github.com/bitpay/bitcore-wallet-service/archive/v${BWS_VERSION}.tar.gz
-RUN tar -zxf v{BWS_VERSION}.tar.gz
+RUN tar -zxf v${BWS_VERSION}.tar.gz
 RUN ls -lah
 
 
