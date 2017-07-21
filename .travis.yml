@@ -1,0 +1,32 @@
+sudo: required
+
+language: ruby
+
+services:
+  - docker
+
+install:
+  - docker-compose build
+  - docker-compose start
+
+script:
+  # Check if services are running
+  - docker ps | grep -q node_one
+  - docker ps | grep -q node_one
+  - docker ps | grep -q insight
+
+  # Check if Bitcoind is running on node_one and node_two
+  - ./one getinfo | grep -q protocolversion
+  - ./two getinfo | grep -q protocolversion
+
+  # Check Insight UI
+  - curl -s http://localhost:3001/insight/ | grep -q "Bitcoin Insight"
+
+  # Check Insight API
+  - curl -s http://localhost:3001/insight-api/version | grep -q "0.4.3"
+
+  # Check Bitcoin Wallet Service
+  - curl -s http://localhost:3232/bws/api/v1/version | grep -q "bws-1.15.0"
+
+notifications:
+  email: false
